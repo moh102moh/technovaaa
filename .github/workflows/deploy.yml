@@ -25,9 +25,13 @@ jobs:
       - name: Set Laravel permissions
         run: chmod -R 775 storage bootstrap/cache
 
+      - name: Create .env file
+        run: |
+          cp .env.example .env
+          php artisan config:clear
+
       - name: Generate application key
         run: php artisan key:generate --force
 
       - name: Run database migrations
         run: php artisan migrate --force
-
