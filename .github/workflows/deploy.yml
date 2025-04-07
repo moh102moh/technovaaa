@@ -1,1 +1,33 @@
+name: Deploy Laravel App to Railway
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  laravel-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, pdo, pdo_mysql
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Set Laravel permissions
+        run: chmod -R 775 storage bootstrap/cache
+
+      - name: Generate application key
+        run: php artisan key:generate --force
+
+      - name: Run database migrations
+        run: php artisan migrate --force
 
