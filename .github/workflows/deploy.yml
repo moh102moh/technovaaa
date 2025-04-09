@@ -41,6 +41,13 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
+      - name: Clear Laravel caches (config, route, view, app)
+        run: |
+          php artisan config:clear
+          php artisan route:clear
+          php artisan view:clear
+          php artisan cache:clear
+
       - name: Cache Laravel config and routes
         run: |
           php artisan config:cache
