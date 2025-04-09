@@ -35,7 +35,7 @@ jobs:
           echo "LOG_CHANNEL=stack" >> .env
           echo "DB_CONNECTION=mysql" >> .env
           echo "DB_HOST=gondola.proxy.rlwy.net" >> .env
-          echo "DB_PORT=3306" >> .env
+          echo "DB_PORT=37239" >> .env
           echo "DB_DATABASE=railway" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=FMqnTCgOjEghQSNZeMOQqghtgFVHEOGd" >> .env
@@ -51,7 +51,6 @@ jobs:
           php artisan config:clear
           php artisan route:clear
           php artisan view:clear
-          php artisan cache:clear
 
       - name: Cache Laravel config and routes
         run: |
@@ -63,7 +62,7 @@ jobs:
         run: |
           php -r "
           try {
-              new PDO('mysql:host=gondola.proxy.rlwy.net;port=3306;dbname=railway', 'root', 'FMqnTCgOjEghQSNZeMOQqghtgFVHEOGd');
+              \$pdo = new PDO('mysql:host=gondola.proxy.rlwy.net;port=37239;dbname=railway', 'root', 'FMqnTCgOjEghQSNZeMOQqghtgFVHEOGd');
               echo '✅ DB connection successful';
           } catch (PDOException \$e) {
               echo '❌ DB connection failed: ' . \$e->getMessage();
