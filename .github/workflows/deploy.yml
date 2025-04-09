@@ -39,7 +39,7 @@ jobs:
           echo "DB_DATABASE=railway" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=FMqnTCgOjEghQSNZeMOQqghtgFVHEOGd" >> .env
-          echo "SESSION_CONNECTION=file" >> .env
+          echo "SESSION_DRIVER=file" >> .env
           echo "SESSION_DOMAIN=technovaaa-production.up.railway.app" >> .env
           echo "SESSION_SECURE_COOKIE=true" >> .env
 
