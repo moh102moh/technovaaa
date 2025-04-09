@@ -27,59 +27,26 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "AWS_DEFAULT_REGION=us-east-1" >> .env
-          echo "AWS_BUCKET=my-bucket" >> .env
-          echo "AWS_URL=https://my-bucket.s3.amazonaws.com" >> .env
-          echo "AWS_ENDPOINT=https://s3.amazonaws.com" >> .env
-          echo "PAPERTRAIL_URL=null" >> .env
-          echo "LOG_STDERR_FORMATTER=some_formatter" >> .env
-          echo "MAIL_SCHEME=smtp" >> .env
-          echo "MAIL_URL=smtp://smtp.mailtrap.io" >> .env
-          echo "POSTMARK_MESSAGE_STREAM_ID=some_id" >> .env
-          echo "MAIL_LOG_CHANNEL=stack" >> .env
-          echo "DB_QUEUE_CONNECTION=database" >> .env
-          echo "APP_KEY=base64:16Q51wqyNSZ2UmdPcxkrzalt4JjPHzZnbByT2pYwRUQ=" >> .env
+          echo "APP_NAME=Laravel" >> .env
           echo "APP_ENV=production" >> .env
+          echo "APP_KEY=base64:16Q51wqyNSZ2UmdPcxkrzalt4JjPHzZnbByT2pYwRUQ=" >> .env
           echo "APP_DEBUG=true" >> .env
           echo "APP_URL=https://technovaaa-production.up.railway.app/" >> .env
+          echo "LOG_CHANNEL=stack" >> .env
           echo "DB_CONNECTION=mysql" >> .env
           echo "DB_HOST=gondola.proxy.rlwy.net" >> .env
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=railway" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=FMqnTCgOjEghQSNZeMOQqghtgFVHEOGd" >> .env
-          echo "SESSION_STORE=database" >> .env
+          echo "SESSION_CONNECTION=database" >> .env
           echo "SESSION_DOMAIN=technovaaa-production.up.railway.app" >> .env
           echo "SESSION_SECURE_COOKIE=true" >> .env
-          echo "DB_CACHE_CONNECTION=mysql" >> .env
-          echo "DB_CACHE_LOCK_CONNECTION=mysql" >> .env
-          echo "DB_CACHE_LOCK_TABLE=cache_locks" >> .env
-          echo "MEMCACHED_PERSISTENT_ID=null" >> .env
-          echo "MEMCACHED_USERNAME=null" >> .env
-          echo "MEMCACHED_PASSWORD=null" >> .env
-          echo "AWS_ACCESS_KEY_ID=null" >> .env
-          echo "AWS_SECRET_ACCESS_KEY=null" >> .env
-          echo "DYNAMODB_ENDPOINT=null" >> .env
-          echo "DB_URL=null" >> .env
-          echo "MYSQL_ATTR_SSL_CA=null" >> .env
-          echo "REDIS_URL=null" >> .env
-          echo "REDIS_USERNAME=null" >> .env
-          echo "REDIS_PASSWORD=null" >> .env
-          echo "LOG_SLACK_WEBHOOK_URL=null" >> .env
-          echo "PAPERTRAIL_PORT=12345" >> .env
-          echo "MAIL_USERNAME=null" >> .env
-          echo "MAIL_PASSWORD=null" >> .env
-          echo "SQS_SUFFIX=null" >> .env
-          echo "POSTMARK_TOKEN=null" >> .env
-          echo "RESEND_KEY=null" >> .env
-          echo "SLACK_BOT_USER_OAUTH_TOKEN=null" >> .env
-          echo "SLACK_BOT_USER_DEFAULT_CHANNEL=null" >> .env
-          echo "SESSION_CONNECTION=database" >> .env
 
       - name: Generate application key
         run: php artisan key:generate --force
 
-      - name: Clear Laravel caches (config, route, view, app)
+      - name: Clear Laravel caches
         run: |
           php artisan config:clear
           php artisan route:clear
@@ -92,5 +59,22 @@ jobs:
           php artisan route:cache
           php artisan view:cache
 
+      - name: Test database connection manually
+        run: |
+          php -r "
+          try {
+              new PDO('mysql:host=gondola.proxy.rlwy.net;port=3306;dbname=railway', 'root', 'FMqnTCgOjEghQSNZeMOQqghtgFVHEOGd');
+              echo '✅ DB connection successful';
+          } catch (PDOException \$e) {
+              echo '❌ DB connection failed: ' . \$e->getMessage();
+              exit(1);
+          }"
+
       - name: Run database migrations
         run: php artisan migrate --force
+
+      - name: Check storage/logs permissions
+        run: |
+          ls -la storage/
+          ls -la storage/logs/
+          touch storage/logs/test.log || echo "❌ Failed to write to storage/logs"
